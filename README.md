@@ -1,4 +1,4 @@
-# Diary-of-Luji
+# Fruit-POS
 
 Here is a simple web-based POS application that I developed as part of the MSIB program with LearningX. In this project, I fully handled the backend side while the frontend was a template provided by my mentor
 
