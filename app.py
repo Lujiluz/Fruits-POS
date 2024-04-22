@@ -18,18 +18,26 @@ db = client[DB_NAME]
 app=Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    if request.method == 'POST':
+        keyword = request.form['keyword'].upper()
+        data = db.fruits.find({'name': keyword})
+        return render_template('dashboard.html', fruits=data)
     data = db.fruits.find({})
     return render_template('dashboard.html', fruits=data)
 
 @app.route('/fruits', methods=['GET', 'POST'])
 def fruit():
+    if request.method == 'POST':
+        keyword = request.form['keyword'].upper()
+        data = db.fruits.find({'name': keyword})
+        return render_template('index.html', fruits=data)
     data = db.fruits.find({})
     return render_template('index.html', fruits=data)
 
 @app.route('/add', methods=['GET', 'POST'])
 def addFruit():
     if request.method == 'POST':
-        name = request.form['fruitName']
+        name = request.form['fruitName'].upper()
         price = request.form['price']
         description = request.form['description']
         img = request.files['image']
@@ -55,7 +63,7 @@ def addFruit():
 @app.route('/edit/<_id>', methods=['GET', 'POST'])
 def editFruit(_id):
     if request.method == 'POST':
-        name = request.form['fruitName']
+        name = request.form['fruitName'].upper()
         price = request.form['price']
         description = request.form['description']
         img = request.files['image']
@@ -83,7 +91,7 @@ def editFruit(_id):
 
 @app.route('/delete/<_id>', methods=['GET', 'POST'])
 def deleteFruit(_id):
-    
+
     db.fruits.delete_one({'_id': ObjectId(_id)})
     return redirect(url_for('fruit'))
 
