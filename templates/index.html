@@ -49,7 +49,7 @@
               <td class="text-center">
                 <a href="/edit/{{fruit._id}}"> <img src="https://img.icons8.com/plumpy/26/000000/edit-calendar.png" /></a>
                 |
-                <a href="">
+                <a href="javascript:void(0)" onclick="handleDelete('{{fruit._id}}', '{{fruit.name}}')">
                   <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 172 172" style="fill: #7d1710">
                     <g
                       fill="none"
@@ -118,5 +118,13 @@
   </div>
 </main>
 <!-- End #main -->
+
+<script>
+  function handleDelete(_id, name) {
+    if (confirm(`Apakah yakin ingin menghapus data buah ${name}?`)) {
+      window.location.href = `/delete/${_id}`;
+    }
+  }
+</script>
 
 {% include 'Footer.html' %}

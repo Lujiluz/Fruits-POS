@@ -1,4 +1,5 @@
 from datetime import datetime
+from bson import ObjectId
 from flask import Flask,redirect,url_for,render_template,request, jsonify
 from pymongo import MongoClient
 import os
@@ -35,8 +36,8 @@ def addFruit():
         current_date = datetime.now().strftime('%m%Y%H%M%S')
         
         if img:
-            extension = img.filename
-            img_path = f'static/assets/img/fruits/{current_date}-{extension}'
+            img_name = img.filename
+            img_path = f'static/assets/img/fruits/{current_date}-{img_name}'
             img.save(img_path)
         else:
             img_name = None
@@ -51,9 +52,40 @@ def addFruit():
 
     return render_template('AddFruit.html')
 
-@app.route('/edit', methods=['GET', 'POST'])
-def editFruit():
-    return render_template('EditFruit.html')
+@app.route('/edit/<_id>', methods=['GET', 'POST'])
+def editFruit(_id):
+    if request.method == 'POST':
+        name = request.form['fruitName']
+        price = request.form['price']
+        description = request.form['description']
+        img = request.files['image']
+        current_date = datetime.now().strftime('%m%Y%H%M%S')
+        
+        if img:
+            img_name = img.filename
+            img_path = f'static/assets/img/fruits/{current_date}-{img_name}'
+            img.save(img_path)
+        else:
+            img_path = None
+            
+        data = {
+            'name' : name,
+            'price': price,
+            'description': description,
+            'img': img_path
+        }
+        db.fruits.update_one({'_id': ObjectId(_id)}, {'$set': data})
+        return redirect(url_for('fruit'))
+    id = ObjectId(_id)
+    data = db.fruits.find_one({'_id': id})
+    print(data['_id'])
+    return render_template('EditFruit.html', fruit=data)
+
+@app.route('/delete/<_id>', methods=['GET', 'POST'])
+def deleteFruit(_id):
+    
+    db.fruits.delete_one({'_id': ObjectId(_id)})
+    return redirect(url_for('fruit'))
 
 if __name__ == '__main__':
     app.run('0.0.0.0',port=5000,debug=True)
